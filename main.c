@@ -8,15 +8,19 @@
 #include <string.h>
 #include <stdlib.h>
 
-typedef struct SHA1
+unsigned int ROL(int bits, unsigned dword)
 {
-
-}SHA1;
+	return ((dword << bits) & 0xFFFFFFFF) | ((dword & 0xFFFFFFFF) >> (32-bits));
+}
 
 int main(void)
 {
 	char *buffer_in, *buffer_out;
-	int len_in;
+	unsigned char Block[64] = {};
+	const unsigned int K[4] = {0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6};
+	unsigned int H[5] = {0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476, 0xC3D2E1F0};
+	unsigned int W[80] = {}, A = 0, B = 0, C = 0, D = 0, E = 0;
+	unsigned long long int len_in = 0, index_in = 0, index_block = 0;
 
 	buffer_in = (char*)malloc(ALIGN_MEM);
 	buffer_out = (char*)malloc(SHA1_LEN);
@@ -32,7 +36,16 @@ int main(void)
 	}while(buffer_in[len_in++] != '\n');
 	buffer_in[--len_in] = '\x00';
 
+	while(len_in--)
+	{
+		Block[index_block++] = buffer_in[index_in++];
+		if (index_block == 64)
+		{
+			
+			index_block = 0;
+		}
 
+	}
 
 	free(buffer_in);
 	free(buffer_out);
